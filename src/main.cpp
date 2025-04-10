@@ -1,5 +1,8 @@
 ﻿#include "../include/Game_Of_Life.h"
 #include <boost/program_options.hpp>
+#include "../include/Variable.h"
+
+using namespace Variable;
 
 namespace po = boost::program_options; // Simplifies the use of the Boost.Program_options library by allowing you to write po::value instead of boost::program_options::value
 
@@ -8,8 +11,8 @@ int main(int argc, char* argv[]) {
         po::options_description desc("Using:"); // Creates a desc object to describe the options. Line “Using:” will be displayed before the list of options when the user requests help.
         desc.add_options() // Adds options
             ("help,h", "show this help")
-            ("width,w", po::value<int>()->default_value(50), "The width of the playing field")
-            ("height,g", po::value<int>()->default_value(25), "The height of the playing field")
+            ("width,w", po::value<int>()->default_value(WIDTH), "The width of the playing field")
+            ("height,g", po::value<int>()->default_value(HEIGHT), "The height of the playing field")
             ;
 
             po::variables_map vm; // Creates a vm object to store option values.
@@ -27,7 +30,7 @@ int main(int argc, char* argv[]) {
 
 
             Game_Of_Life a;
-            a.Start(height, width); // 
+            a.Start(HEIGHT, WIDTH); // 
 
     }
     catch (const exception& e) {

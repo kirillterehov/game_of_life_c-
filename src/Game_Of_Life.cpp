@@ -5,7 +5,7 @@
 using namespace Variable;
 
 
-int Game_Of_Life::NextLiveCells(int i, int j, Field& board) {
+int Game_Of_Life::NextLiveCells(int i, int j, vector<vector<char>>&field) {
 	int live = 0;
 	int x = 0;
 	int y = 0;
@@ -15,9 +15,9 @@ int Game_Of_Life::NextLiveCells(int i, int j, Field& board) {
 				continue;
 			}
 			else {
-				x = (i + m + board.Height) % board.Height; // we calculate the x coordinate for each neighboring cell, around the cell we are considering. The coordinates of the cell in question are the variables i and j
-				y = (j + n + board.Width) % board.Width; // we calculate the y coordinate for each neighboring cell, around the cell we are considering. The coordinates of the cell in question are the variables i and j
-				live += int(board.field[x][y]); // we take the integer value of the field array element. It can be 0 or 1
+				x = (i + m + HEIGHT) % HEIGHT; // we calculate the x coordinate for each neighboring cell, around the cell we are considering. The coordinates of the cell in question are the variables i and j
+				y = (j + n + WIDTH) % WIDTH; // we calculate the y coordinate for each neighboring cell, around the cell we are considering. The coordinates of the cell in question are the variables i and j
+				live += int(field[x][y]); // we take the integer value of the field array element. It can be 0 or 1
 			}
 		}
 	}
@@ -25,11 +25,12 @@ int Game_Of_Life::NextLiveCells(int i, int j, Field& board) {
 }
 
 void Game_Of_Life::NextGeneration(Field& board) { // Creating a reference to an object of the Field class. Since my field is public, I can use the link to change it. If value transfer had been used, then nothing would have worked. Since in my case, I'm overwriting the field itself, which I have declared in the Field class
-	vector<vector<char>> new_field(board.Height); // initializing a new array
-	for (int i = 0; i < board.Height; i++) {
-		new_field[i] = vector<char>(board.Width);
-		for (int j = 0; j < board.Width; j++) {
-			int liveCells = NextLiveCells(i, j, board); // Access the member variable named field of the object named board. From class Field
+	FlagEquality = false;
+	vector<vector<char>> new_field(HEIGHT); // initializing a new array
+	for (int i = 0; i < HEIGHT; i++) {
+		new_field[i] = vector<char>(WIDTH);
+		for (int j = 0; j < WIDTH; j++) {
+			int liveCells = NextLiveCells(i, j, board.field); // Access the member variable named field of the object named board. From class Field
 
 			if (board.field[i][j] == INT_LIVE_CELL && liveCells == COUNT_LIVECELLS_OPTION1 || liveCells == COUNT_LIVECELLS_OPTION2) { // if a cell is alive and the number of neighbors around it is 2 or 3, then this cell will also be alive in the new array.
 				new_field[i][j] = INT_LIVE_CELL;
@@ -51,11 +52,11 @@ void Game_Of_Life::NextGeneration(Field& board) { // Creating a reference to an 
 	}
 }
 
-int Game_Of_Life::CountLiveCellsOnFileld(Field& board) {// We pass the field parameter via the link in order to work directly with our field and not with its copy.
+int Game_Of_Life::CountLiveCellsOnFileld(vector<vector<char>>& field) {// We pass the field parameter via the link in order to work directly with our field and not with its copy.
 	int Cells = 0;
-	for (int i = 0; i < board.Height; i++) {
-		for (int j = 0; j < board.Width; j++) {
-			if (int(board.field[i][j]) == INT_LIVE_CELL) {
+	for (int i = 0; i < HEIGHT; i++) {
+		for (int j = 0; j < WIDTH; j++) {
+			if (int(field[i][j]) == INT_LIVE_CELL) {
 				Cells++; // we count the number of living cells in the field.
 			}
 		}
@@ -65,13 +66,13 @@ int Game_Of_Life::CountLiveCellsOnFileld(Field& board) {// We pass the field par
 
 
 
-void Game_Of_Life::Start(int Height, int Width) {
+void Game_Of_Life::Start(const int height, const int width) {
 	int Generation = 0; // generation counter
 	int CountLiveCells = 0; // live cell counter
 	int MaxGeneration = 1500; // the maximum number of generations that the game lives in
 	int all_cells_dead = 0; // flag all cells dead
 	int our_sleep = 500; // DELAY BETWEEN ITERATIONS
-	Field board(Height, Width); // creating an object of the Field class
+	Field board(HEIGHT, WIDTH); // creating an object of the Field class
 	board.InitializeField(); // initializing an object of the Field class
 	board.PrintField(); // printing the field
 	while (Generation < MaxGeneration) {
@@ -79,7 +80,7 @@ void Game_Of_Life::Start(int Height, int Width) {
 		board.PrintField(); // printing the field
 		this_thread::sleep_for(chrono::milliseconds(our_sleep)); // There is a delay of 100 milliseconds so that the field configuration does not change quickly.
 		Generation++; // increasing the generation counter
-		CountLiveCells = CountLiveCellsOnFileld(board); // counting the number of living cells. As an array, we pass a member variable named field to an object named board.From the class field. Since the transfer is done by reference, we work with our field from the class
+		CountLiveCells = CountLiveCellsOnFileld(board.field); // counting the number of living cells. As an array, we pass a member variable named field to an object named board.From the class field. Since the transfer is done by reference, we work with our field from the class
 		if (CountLiveCells == all_cells_dead || FlagEquality == TRUE_FLAGE_QUALITY) { // if the flag is 1 or the number of live cells is 0, then abort
 			break;
 		}

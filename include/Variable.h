@@ -9,5 +9,7 @@ namespace Variable {
 	const int MINIMUM_NEIGHBORS = -1;// minimum neighbor position
 	const int MAXIMUM_NEIGHBORS = 1;// maximum neighbor position
 	const int OUR_CELL = 0;// the position of our cell
+	const int HEIGHT = 25; // field height
+	const int WIDTH = 80; // field width
 }
 
