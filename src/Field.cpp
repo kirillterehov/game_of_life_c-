@@ -2,8 +2,13 @@
 #include "../include/Variable.h"
 using namespace Variable;
 
-Field::Field(const int x, const int y) {} // a constructor 
+Field::Field() {} // a constructor 
 
+int Field::getCell(int row, int col) const {return field[row][col];}// Getter for accessing a single cell
+
+void Field::setCell(int row, int col, int value) {field[row][col] = value;}// Setter for setting the value of a single cell
+
+const vector<vector<char>>& Field::getField() const { return field; } // Getter for field (if needed for debugging or display)
 
 void Field::InitializeField() { // implementation of the field initialization function
 	srand(time(0)); // Initialization of a random number generator that takes as a parameter the unix system time that has passed since January 1, 1970

@@ -10,9 +10,9 @@ int main(int argc, char* argv[]) {
     try {
         po::options_description desc("Using:"); // Creates a desc object to describe the options. Line “Using:” will be displayed before the list of options when the user requests help.
         desc.add_options() // Adds options
-            ("help,h", "show this help")
-            ("width,w", po::value<int>()->default_value(WIDTH), "The width of the playing field")
-            ("height,g", po::value<int>()->default_value(HEIGHT), "The height of the playing field")
+            ("help", "show this help")
+            ("width", po::value<int>()->default_value(WIDTH), "The width of the playing field")
+            ("height", po::value<int>()->default_value(HEIGHT), "The height of the playing field")
             ;
 
             po::variables_map vm; // Creates a vm object to store option values.
@@ -30,15 +30,15 @@ int main(int argc, char* argv[]) {
 
 
             Game_Of_Life a;
-            a.Start(HEIGHT, WIDTH); // 
+            a.Start(); // start game
 
     }
     catch (const exception& e) {
-        cerr << "Ошибка: " << e.what() << endl;
+        cerr << "Error: " << e.what() << endl;
         return 1;
     }
     catch (...) {
-        cerr << "Неизвестная ошибка!" << endl;
+        cerr << "Unkown Error!" << endl;
         return 1;
     }
 

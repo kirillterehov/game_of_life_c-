@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_FILES
     src/Field.cpp
     src/Game_Of_Life.cpp
-    test/catch_amalgamated.cpp # Add catch_amalgamated.cpp to the source files
 )
 
 include_directories(
@@ -18,7 +17,7 @@ include_directories(
 add_library(GameOfLife_lib STATIC ${SOURCE_FILES})
 
 # Link Boost to GameOfLife library
-set(Boost_DIR "D:/Kirill.documents/c++/boost_1_82_0/stage/lib/cmake/Boost-1.82.0")
+set(Boost_DIR BOOST_CMAKE_PATH)
 find_package(Boost REQUIRED program_options)
 
 if(Boost_FOUND)

@@ -1,99 +1,113 @@
-#define CATCH_CONFIG_MAIN
-#include "../include/catch_amalgamated.hpp"
+#define BOOST_TEST_MODULE GameOfLifeTests
+#include <boost/test/included/unit_test.hpp>
 #include "../include/Game_Of_Life.h"
 #include "../include/Variable.h"
+#include "../include/Field.h"
 
 using namespace Variable;
 
-// Helper function to create a Field with specific initial state
-Field createField(int height, int width, const std::vector<std::pair<int, int>>& liveCells) {
-    Field field(height, width);
-    field.field.resize(height);  // Устанавливаем правильный размер вектора
 
+Field createEmptyField(int height, int width) {
+    Field field;
+    field.InitializeField(); // Random initialization
     for (int i = 0; i < height; ++i) {
-        field.field[i].resize(width, INT_DEATH_CELL); // Инициализируем каждую строку
-    }
-    for (const auto& cell : liveCells) {
-        field.field[cell.first][cell.second] = INT_LIVE_CELL; // Set живые клетки
+        for (int j = 0; j < width; ++j) {
+            field.setCell(i, j, INT_DEATH_CELL); // Make all the cells dead
+        }
     }
     return field;
 }
 
+Field createField(int height, int width, const vector<pair<int, int>>& liveCells) {
+    Field field = createEmptyField(height, width); // Create an empty field
 
-TEST_CASE("NextGeneration applies rules correctly", "[NextGeneration]") {
+    // Set initial live cells
+    for (const auto& cell : liveCells) {
+        field.setCell(cell.first, cell.second, INT_LIVE_CELL);
+    }
+    return field;
+}
+
+BOOST_AUTO_TEST_CASE(test_NextGeneration_applies_rules_correctly) {
     Game_Of_Life game; // Create a Game_Of_Life object
 
-    SECTION("Live cell with fewer than 2 live neighbors dies") {
+    // Live cell with fewer than 2 live neighbors dies
+    {
         // Arrange
-        Field field = createField(25, 80, { {1, 1} }); // Single live cell
+        Field field = createField(HEIGHT, WIDTH, { {1, 1} }); // Single live cell
 
         // Act
         game.NextGeneration(field); // Apply one generation
 
         // Assert
-        REQUIRE(field.field[1][1] == INT_DEATH_CELL); // Cell at (1,1) should die
+        BOOST_CHECK(field.getCell(1, 1) == INT_DEATH_CELL); // Cell at (1,1) should die, using the getter
     }
 
-    SECTION("Live cell with 2 live neighbors survives") {
+
+    // Live cell with 2 live neighbors survives
+    {
         // Arrange
-        Field field = createField(25, 80, { {0, 0}, {0, 1}, {1, 0} });
+        Field field = createField(HEIGHT, WIDTH, { {0, 0}, {0, 1}, {1, 0} });
 
         // Act
         game.NextGeneration(field);
 
         // Assert
-        REQUIRE(field.field[1][1] == INT_LIVE_CELL);
+        BOOST_CHECK(field.getCell(1, 1) == INT_LIVE_CELL); // using the getter
     }
 
-    SECTION("Live cell with 3 live neighbors survives") {
+    // Live cell with 3 live neighbors survives
+    {
         // Arrange
-        Field field = createField(25, 80, { {0, 0}, {0, 1}, {1, 0}, {1, 1} });
+        Field field = createField(HEIGHT, WIDTH, { {0, 0}, {0, 1}, {1, 0}, {1, 1} });
         // Act
         game.NextGeneration(field);
         // Assert
-        REQUIRE(field.field[1][1] == INT_LIVE_CELL);
+        BOOST_CHECK(field.getCell(1, 1) == INT_LIVE_CELL); // using the getter
     }
 
-    SECTION("Live cell with more than 3 live neighbors dies") {
+    // Live cell with more than 3 live neighbors dies
+    {
         // Arrange
-        Field field = createField(25, 80, {
+        Field field = createField(HEIGHT, WIDTH, {
             {0, 0}, {0, 1}, {0, 2},
             {1, 0}, {1, 1}
             });
         // Act
         game.NextGeneration(field);
         // Assert
-        REQUIRE(field.field[1][1] == INT_DEATH_CELL);
+        BOOST_CHECK(field.getCell(1, 1) == INT_DEATH_CELL); // using the getter
     }
 
-    SECTION("Dead cell with exactly 3 live neighbors becomes alive") {
+    // Dead cell with exactly 3 live neighbors becomes alive
+    {
         // Arrange
-        Field field = createField(25, 80, { {0, 0}, {0, 1}, {1, 0} });
+        Field field = createField(HEIGHT, WIDTH, { {0, 0}, {0, 1}, {1, 0} });
         // Act
         game.NextGeneration(field);
         // Assert
-        REQUIRE(field.field[1][1] == INT_LIVE_CELL);
+        BOOST_CHECK(field.getCell(1, 1) == INT_LIVE_CELL); // using the getter
     }
 
-    SECTION("Equality flag set when board doesn't change - BLOCK") {
+    // Equality flag set when board doesn't change - BLOCK
+    {
         // Arrange
-        Field field = createField(25, 80, { {0, 0}, {0, 1}, {1, 0}, {1, 1} });
+        Field field = createField(HEIGHT, WIDTH, { {0, 0}, {0, 1}, {1, 0}, {1, 1} });
         game.FlagEquality = false;
-
         // Act
         game.NextGeneration(field);
         // Assert
-        REQUIRE(game.FlagEquality == TRUE_FLAGE_QUALITY);
+        BOOST_CHECK(game.FlagEquality == TRUE_FLAGE_QUALITY);
     }
 
-    SECTION("Equality flag set when board changes - BLINKER") {
+    // Equality flag set when board changes - BLINKER
+    {
         // Arrange
-        Field field = createField(25, 80, { {1, 0}, {1, 1}, {1, 2} });
+        Field field = createField(HEIGHT, WIDTH, { {1, 0}, {1, 1}, {1, 2} });
         game.FlagEquality = true;
-
         // Act
         game.NextGeneration(field);
         // Assert
-        REQUIRE(game.FlagEquality == false);
+        BOOST_CHECK(game.FlagEquality == false);
     }
 }
