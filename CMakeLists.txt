@@ -17,7 +17,7 @@ include_directories(
 add_library(GameOfLife_lib STATIC ${SOURCE_FILES})
 
 # Link Boost to GameOfLife library
-set(Boost_DIR BOOST_CMAKE_PATH)
+set(Boost_DIR $ENV{BOOST_CMAKE_PATH})
 find_package(Boost REQUIRED program_options)
 
 if(Boost_FOUND)
